@@ -2,20 +2,20 @@ const siteMetadata = {
   title: 'EchidunaBlog',
   author: 'Echiduna',
   headerTitle: 'EchidunaBlog',
-  description: 'A Blog inspired by Tails Azimuth',
+  description: 'TO LIVE A LIFE',
   language: 'zh-cn',
   theme: 'system', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
   siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
-  siteLogo: '/static/images/logo.png',
+  siteLogo: '/static/images/Echiduna.png',
   image: '/static/images/avatar.png', // 这个是作者头像
   socialBanner: '/static/images/twitter-card.png',
-  email: 'address@yoursite.com',
-  github: 'https://github.com',
-  twitter: 'https://twitter.com/Twitter',
-  facebook: 'https://facebook.com',
-  youtube: 'https://youtube.com',
-  linkedin: 'https://www.linkedin.com',
+  email: 'martinwittgenstein0424@gmail.com',
+  github: 'https://github.com/GreedyEchiduna',
+  twitter: 'https://twitter.com/TyrionLee4',
+  // facebook: 'https://facebook.com',
+  // youtube: 'https://youtube.com',
+  // linkedin: 'https://www.linkedin.com',
   locale: 'zh-CN',
   // 这里是评论, 用户信和网页分析的元信息, 暂时不能删除
   analytics: {
