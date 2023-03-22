@@ -1,0 +1,26 @@
+---
+title: 'Rust学习资源'
+date: '2023-03-22'
+lastmod: '2023-03-22'
+tags: ['rust', 'web']
+draft: false
+summary: '博主近期收集和学习的一些优质Rust学习资源'
+authors: ['default']
+layout: PostLayout
+---
+
+## 文章
+
+- [国内一篇收集了一些比较好的文章的博文](https://www.cnblogs.com/dou-fu-gan/p/15846306.html)
+
+## 练习
+
+1. [rustlings](https://github.com/rust-lang/rustlings)
+
+rustlings 是 Rust 官方推出的一个练习项目, 里面包含了 Rust 的大部分语法, 适合新手练习, 也适合老手复习. 值得一提的是, rustlings 本身有提供一个相当有趣的 Rust 编写的命令行工具用来跟踪检查练习进度, 以及搜寻提示, 测试答案.
+
+推荐在学习 Rust book 的同时, 在 rustlings 练习对应的章节中. 值得注意的是, rustlings 本身并不提供讲解和参考答案, 而是在每个`exercises`中的`README.md`给出相应的参考资料, 有相当一部分都是标准库. 因此, 完成 rustlings 的同时, 参阅[Rust std](https://doc.rust-lang.org/std/)是必不可少的
+
+不过 rustlings 并不是十全十美的, 在博主完成 quiz3.rs 的时候, 就十分困惑作者究竟想要大家使用什么方法实现, 就算阅读了提示, 这个问题也相当地迷惑. 其中有一些练习模块也需要别的模块的知识(尤其是多线程或者是智能指针部分), 这当然也有 Rust 特性环环相扣的原因在. 所以, 在完成 rustlings 之前, 对 Rust 有宏观基本的理解是最好的.
+
+rustlings 练习的深度还是相较浅的, rustlings 的答案可以参照[博主的实现](https://github.com/GreedyEchiduna/rustlings/tree/my_answer)
