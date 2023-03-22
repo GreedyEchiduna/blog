@@ -1,14 +1,16 @@
 const siteMetadata = {
   title: 'EchidunaBlog',
   author: 'Echiduna',
-  headerTitle: 'EchidunaBlog',
+  headerTitle: '',
   description: 'TO LIVE A LIFE',
   language: 'zh-cn',
   theme: 'system', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
+  // 修改网站托管的仓库
   siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
-  siteLogo: '/static/images/Echiduna.png',
-  image: '/static/images/avatar.png', // 这个是作者头像
+  // 这里的这个文件引用作用不太清晰 但是不能删除
+  siteLogo: '/static/images/logo.svg',
+  image: '/static/favicons/duna.jpg', // 这个是作者头像
   socialBanner: '/static/images/twitter-card.png',
   email: 'martinwittgenstein0424@gmail.com',
   github: 'https://github.com/GreedyEchiduna',
