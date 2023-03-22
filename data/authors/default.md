@@ -1,6 +1,6 @@
 ---
 name: Echiduna
-avatar: /static/images/duna.jpg
+avatar: /static/favicons/duna.jpg
 occupation: CS student
 company: Echiduna Uni
 email: martinwittgenstein0424@gmail.com
