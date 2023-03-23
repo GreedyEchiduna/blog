@@ -4,13 +4,14 @@ date: '2023-03-23'
 lastmod: '2023-03-23'
 tags: ['rust', 'iterator']
 draft: false
-summary: 'Google comprehensive Rust课程的练习分析'
+summary: 'Google Comprehensive-Rust课程第二天下午练习的分析'
 authors: ['default']
 layout: PostLayout
 ---
 
-
 本题来源自[谷歌的Comprehensive-Rust课程第二天下午的练习](https://google.github.io/comprehensive-rust/exercises/day-2/luhn.html)
+
+### 问题描述
 
 在这个练习的描述中, Luhn Algorithm是一种用来验证银行卡号是否合法的算法. 他的具体流程如下:
 
@@ -19,7 +20,13 @@ layout: PostLayout
 3. 从数字的右侧的第二个数开始, 每隔一个数进行一次这样的处理: 将这个数字乘以`2`, 然后将得到的数字拆分相加. 例如, 数字`7`就应该首先乘以`2`变为`14`, 然后在变为`1+4`, 最后得到5
 5. 将处理完之后的数字全部相加, 若个位为0, 则说明输入的字符串是一个合法的银行卡号
 
-这道题目的思路并不难, 然而, 如何写出优美的解法, 就需要一定的思考了. 因为要对字符进行遍历处理, `chars`迭代器就必不可少了. 随后是剔除空格, 使用`filter`迭代器可以将上一步得到的字符迭代器进行进一步筛选, 得到其中**非空格**的内容. 由于题目要求从右到左处理字符串, 因此使用`rev`迭代器将字符串反转. 所有的**奇数索引**的数字, 都需要进行特殊的运算, 因此使用`enumerate`迭代器为上一轮的迭代器增加一个表示索引的维度. 到这里, 准备工作都已经完成, 我们就可以进行字符串转化为数字的操作了. 使用(`to_digit`)[https://doc.rust-lang.org/std/primitive.char.html#method.to_digit] 并指定转化字符为对应的十进制数的同时, 因为`to_digit`会对不可转化为数字的字符返回`None`, 所以我们可以使用`let Some()` 直接**匹配**出字符中的数字. 在这里, `for_each`迭代器并不是必要的, 也可以使用for loop来代替. 每次匹配出数字的同时, 更新统计数字个数和统计总和的变量即可.
+### 思路分析
+
+这道题目的思路并不难, 然而, 如何尽可能地利用[Rust std](https://doc.rust-lang.org/std/index.html)中提供的API, 写出相较优美的解法, 就需要一定的思考了. 本题的核心就是遍历字符串, 并且在这个过程中, 对每个字符做出几种模式的处理. 如果全部使用for loop, 整个算法的代码会变得异常地冗杂, 因此, 对于这种情况, Rust的[`Iterator Trait`](https://doc.rust-lang.org/std/iter/trait.Iterator.html)提供了相当多的`迭代器适配器(Adapter)`来帮助我们用尽可能少的代码, **声明式**地解决问题. 
+
+### 解法与分析
+
+因为要对字符进行遍历处理, `chars`迭代器就必不可少了. 随后是剔除空格, 使用`filter`迭代器可以将上一步得到的字符迭代器进行进一步筛选, 得到其中**非空格**的内容. 由于题目要求从右到左处理字符串, 因此使用`rev`迭代器将字符串反转. 所有的**奇数索引**的数字, 都需要进行特殊的运算, 因此使用`enumerate`迭代器为上一轮的迭代器增加一个表示索引的维度. 到这里, 准备工作都已经完成, 我们就可以进行字符串转化为数字的操作了. 使用(`to_digit`)[https://doc.rust-lang.org/std/primitive.char.html#method.to_digit] 并指定转化字符为对应的十进制数的同时, 因为`to_digit`会对不可转化为数字的字符返回`None`, 所以我们可以使用`let Some()` 直接**匹配**出字符中的数字. 在这里, `for_each`迭代器并不是必要的, 也可以使用for loop来代替. 每次匹配出数字的同时, 更新统计数字个数和统计总和的变量即可.
 
 ```rust
   
