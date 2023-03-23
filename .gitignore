@@ -36,9 +36,12 @@ yarn-error.log*
 .env.production.local
 
 # idea
-/.idea
+/.idea/
 
 # vscode
-/.vscode
+/.vscode/
 blog.code-workspace
 
+/.obsidian/
+
+/template/
