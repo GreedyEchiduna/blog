@@ -1,0 +1,81 @@
+---
+title: '深入Rust函数之函数参数与普遍函数'
+date: '2023-03-24'
+lastmod: '2023-03-24'
+tags: ['rust', 'FP', 'Universe_Function']
+draft: false
+summary: '本文将通过例子讨论Rust中的函数参数的使用方法和UniverseFunction机制'
+authors: ['default']
+layout: PostLayout
+---
+
+这两天翻阅标准库的时候, 有一个用法让我十分不解: 
+
+```rust
+assert_eq!(
+    [2.4, f32::NAN, 1.3]
+        .into_iter()
+        .reduce(f32::max)
+        .unwrap(),
+    2.4
+);
+```
+
+
+这个是[迭代器中的`max`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.max)中的内容, 在这里, 标准库写道: 因为浮点数并没有实现`Ord Trait`, 因此对于一个由浮点数组成的集合转化而来的迭代器, 我们没有办法直接调用`max`方法获取迭代器中元素的最大值, 因为这个方法依赖于`Ord Trait`, 因此, 就有了如上的处理方式.
+
+## 函数与闭包
+然而, 奇怪就奇怪在这里, `reduce`这个迭代器方法最常见的用法应该是接受一个有两个参数的闭包, 第一个是需要累计的值, 第二个值则是迭代器中的元素, 并且这个闭包需要返回一个值, 实现归约的效果. 最后, `reduce`迭代器会返回一个一个`Option`. 当迭代器为空时, `reduce`会返回一个`Option::None`
+
+```
+let reduced: i32 = (1..10).reduce(|acc, e| acc + e).unwrap();
+assert_eq!(reduced, 45);
+
+// Which is equivalent to doing it with `fold`:
+let folded: i32 = (1..10).fold(0, |acc, e| acc + e);
+assert_eq!(reduced, folded);
+```
+
+常见的`reduce`的使用方法就如上面这段标准库中的代码一样. 上面的`reduce`和`fold`都实现了计算0-9, 包括9的和. 差别只是`fold`可以指定初始值, 而且最后会直接返回结果, 并不会返回`Option`. 那么问题来了, 像第一段代码中那样, 只是传入了一个不明不白的`f32::max`又是怎么回事呢?
+
+## self签名转化为普遍形式
+
+其实, 阅读函数签名, `reduce`能够接受的并不只是闭包, 它的范围实际上是`F: FnMut(Self::item, Self::item -> Self::item`. 这意味着, 所有的接受两个与迭代器中元素的类型相同, 并且返回一个这个类型的值的**函数**而不仅仅是*闭包*都可以作为它的参数. `f32::max`就是这样的一个**函数**, 然而, 问题到这里并没有完全解决, 若是翻到`f32::max`的文档, 我们可以发现这个方法实际上接受的是一个`self`参数和另一个用于比较的`f32`数值, 它的调用方式实际上应该是这样:
+
+```rust
+let a: f32 = 1.0;
+let b: f32 = 2.0;
+assert_eq!(a.max(b), b);
+```
+
+难道`reduce`不是应该接受一个有两个参数的函数吗? 神奇的事情来了, 在上面这个过程中, 其实有这样一件事情发生了`a.max(b)` 转化为了`f32::max(a, b)` , 也就是说, 实际上我们也可以直接以后者的方式调用`max`这个函数, 这么看来, 把后者放入到`reduce`对参数的要求中, 就能完美符合答案了. 
+
+## 最后
+
+所以, 回到最开始的那段代码, `reduce`部分的作用实际上是调用`max`函数, 将数组中每个浮点数逐一进行比较, 并且保留其中更大的数作为累计值. 之所以要使用`f32::max` 这个函数, 是因为在数组中还有一个`f32:NAN`这样的非数字, 而`f32::max` 可以在比较的时候做到将它忽略, 不影响结果. 
+
+## 最最后
+
+你能通过阅读[Rust std](https://doc.rust-lang.org/std/index.html)中和`Reverse`以及标准库中实现的最大二叉堆的说明, 结合上面的知识, 解释这段代码的作用和其中`Reverse`的用法吗?
+
+[你可以在Rust Playground运行这顿代码](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021)
+
+```rust
+use std::cmp::Reverse;
+use std::collections::BinaryHeap;
+fn main() {
+    let mut a  = vec![1,2,3];
+    let mut b: BinaryHeap<_> = a.iter()
+        .map(Reverse)
+        .collect();
+    while let Some(Reverse(num)) = b.pop(){
+        println!("{:?}", num);
+    }
+}
+```
+
+## 参考阅读
+
+1. [Stack Overflow Rust最小二叉堆的实现](https://stackoverflow.com/questions/54489368/how-do-i-create-a-binaryheap-that-pops-the-smallest-value-not-the-largest)
+2. [Rust RFC](https://github.com/rust-lang/rfcs/blob/master/text/0132-ufcs.md)
+3. [Rust论坛](https://users.rust-lang.org/t/how-to-use-reduce-in-iterator-trait/91390)
