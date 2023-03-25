@@ -7,8 +7,7 @@ const siteMetadata = {
   theme: 'system', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
   // 修改网站托管的仓库
-  siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
-  // 这里的这个文件引用作用不太清晰 但是不能删除
+  siteRepo: 'https://github.com/GreedyEchiduna/blog',
   siteLogo: '/static/images/logo.svg',
   image: '/static/favicons/duna.jpg', // 这个是作者头像
   socialBanner: '/static/images/twitter-card.png',

@@ -4,10 +4,14 @@ date: '2023-03-24'
 lastmod: '2023-03-24'
 tags: ['rust', 'FP', 'Universe_Function']
 draft: false
-summary: '本文将通过例子讨论Rust中的函数参数的使用方法和UniverseFunction机制'
+summary: '本文将通过例子讨论Rust中的函数参数的使用方法和universal function机制'
 authors: ['default']
 layout: PostLayout
 ---
+
+
+
+## 起
 
 这两天翻阅标准库的时候, 有一个用法让我十分不解: 
 
@@ -22,7 +26,7 @@ assert_eq!(
 ```
 
 
-这个是[迭代器中的`max`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.max)中的内容, 在这里, 标准库写道: 因为浮点数并没有实现`Ord Trait`, 因此对于一个由浮点数组成的集合转化而来的迭代器, 我们没有办法直接调用`max`方法获取迭代器中元素的最大值, 因为这个方法依赖于`Ord Trait`, 因此, 就有了如上的处理方式.
+这个是[迭代器中的`max`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.max)中的内容, 在这里, 标准库写道: 因为浮点数并没有实现`Ord Trait`, 因此对于一个由浮点数组成的集合转化而来的迭代器, 我们没有办法直接调用`max`方法获取迭代器中元素的最大值, 因为这个方法依赖于`Ord Trait`, 因此, 想要获得一个浮点数集合中浮点数的最大值, 就有了如上的处理方式.
 
 ## 函数与闭包
 然而, 奇怪就奇怪在这里, `reduce`这个迭代器方法最常见的用法应该是接受一个有两个参数的闭包, 第一个是需要累计的值, 第二个值则是迭代器中的元素, 并且这个闭包需要返回一个值, 实现归约的效果. 最后, `reduce`迭代器会返回一个一个`Option`. 当迭代器为空时, `reduce`会返回一个`Option::None`
@@ -79,3 +83,6 @@ fn main() {
 1. [Stack Overflow Rust最小二叉堆的实现](https://stackoverflow.com/questions/54489368/how-do-i-create-a-binaryheap-that-pops-the-smallest-value-not-the-largest)
 2. [Rust RFC](https://github.com/rust-lang/rfcs/blob/master/text/0132-ufcs.md)
 3. [Rust论坛](https://users.rust-lang.org/t/how-to-use-reduce-in-iterator-trait/91390)
+
+
+
