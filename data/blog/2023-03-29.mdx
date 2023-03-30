@@ -1,0 +1,129 @@
+---
+title: 'JS逆向第一天'
+date: '2023-03-29'
+lastmod: '2023-03-29'
+tags: ['JS', 'Python', 'Rust', 'Reverse_Engineer']
+draft: false
+summary: '逆向入坑的常用工具参考记录(Rust和Python)'
+authors: ['default']
+layout: PostLayout
+---
+
+今天算是入了JS逆向工程的坑. 
+
+## 第一原则
+
+题目是比较简单的题目, 猿人学练习平台中第一题. 这道题目没有设置任何的JS混淆, 但是我在这道题目卡了很久. 原因还是对各种逆向工具使用得太少, 熟练度太低了. 一开始我没有搞清楚信息爬取的原则: 先判断一个信息是动态获取的, 也就是说是由网页中的JS通过各种运算得出并且返回渲染到DOM中的, 还是静态的, 直接呈现在网页上. 这两个的区别, 实际上就是浏览器工具与大规模爬取工具之间的区别. 浏览器的核心是为用户呈现网页, 用户并不关心页面上的数据的形成过程, 所有的发送请求, 获取数据, 处理数据, 呈现DOM的过程都被浏览器屏蔽起来了. 爬虫工具的核心就是拆开浏览器的黑箱, 模拟浏览器的运作, 以得到我们想要的数据. 
+
+## 工具
+
+工欲善其事, 必先利其器. 常用的爬虫工具是必须熟练使用的:
+
+- 谷歌小黑窗
+	- 可以导出报文为各种形式, 最好用的是CURL形式
+- fiddler抓包工具
+	- 重放操作
+- Python的request库
+- POSTMAN(有时候可以被fiddler取代)
+- [CURL转各语言的HTTP请求库代码](https://tool.yuanrenxue.cn/curl)
+
+## 一些基本知识
+
+每种常见的数据操纵都有常用的工具: 
+
+- [MD5](https://tool.yuanrenxue.cn/md5)
+- [BASE64](https://tool.yuanrenxue.cn/base64)
+- [JSON](https://tool.yuanrenxue.cn/json)
+- 浏览器端JS
+
+### BASE64
+
+BASE64有个比较坑的地方: `pad` 或者是 `no_pad` 这两种编码模式的差别在于是否会在编码后的字符串中出现`=` , 对应到Rust中最受欢迎的[BASE64 crate](https://docs.rs/base64/0.21.0/base64/index.html) 来说, 后者就是`general_purpose::STANDARD_NO_PAD`, 前者就是`general_purpose::STANDARD`. 
+BASE64相关的知识还需要进一步研究, 比如说各种设置和`general_purpose` 的含义. 
+
+#### Python的API
+
+在进行base64编码之前, 字符串首先要转换为字节流的形式
+```python
+import base64
+s = "aaa"
+base64.b64encode(b"a")
+base64.b64encode(s.encode())
+```
+
+#### Rust的API
+
+```Rust
+let orig = b"data";
+let encoded: String = general_purpose::STANDARD_NO_PAD.encode(orig); // NO PAD
+assert_eq!("ZGF0YQ", encoded);
+let encoded_with_pad = general_purpose::STANDARD.encode(orig) // WITH PAD
+
+```
+
+
+
+
+### 时间戳
+
+#### Python API 
+
+```Python
+import time
+float_second = time.time()
+second = int(float_second)
+```
+
+#### Rust API
+
+```rust
+use std::time::SystemTime;
+let sys_time = SystemTime::now();  // 创建一个时间点
+let new_sys_time = SystemTime::now(); // 下一个时间点
+let difference = new_sys_time.duration_since(sys_time) // duration_since() 返回Ok(Duration)
+    .expect("Clock may have gone backwards");
+println!("{difference:?}");
+
+// 等价于
+let difference = SystemTime.elapsed();
+// 获取时间戳 这里以秒为单位, 且获得的是整数
+use std::time::SystemTime;
+match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH) {
+    Ok(n) => println!("1970-01-01 00:00:00 UTC was {} seconds ago!", n.as_secs()),
+    Err(_) => panic!("SystemTime before UNIX EPOCH!"),
+}
+```
+
+### MD5
+
+#### Python API 
+
+```Python
+import hashlib
+m = hashlib.md5()
+m.update(b"1")
+result = m.hexdigest() // 获取三十二位小写的MD5结果
+```
+
+#### Rust API
+
+[md5 crate](https://crates.io/crates/md5)
+
+```toml
+# cargo.toml
+md5 = "0.7.0"
+```
+
+```Rust
+let digest = md5::compute(b"abcdefghijklmnopqrstuvwxyz");
+// 获取三十二位小写的MD5结果
+assert_eq!(format!("{:x}", digest), "c3fcd3d76192e4007dfb496cca67e13b"); //{:x} 十六进制 小写
+```
+[Rust中格式化参考文档](https://doc.rust-lang.org/std/fmt/index.html#fillalignment)
+
+## 进一步研究
+
+- 谷歌浏览器的开发者工具文档
+- fiddler开发工具的文档
+- [好文章](https://www.cnblogs.com/ospider/p/python-curl-cffi-tls-fingerprint.html)
+
