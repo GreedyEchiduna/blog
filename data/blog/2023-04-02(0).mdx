@@ -1,0 +1,57 @@
+---
+title: '墙内使用Cargo的大坑'
+date: '2023-04-02'
+lastmod: '2023-04-02'
+tags: ['Rust', 'cargo', 'github', 'gfw']
+draft: false
+summary: '记录一次修复cargo fetch网络问题的经历'
+authors: ['default']
+layout: PostLayout
+---
+
+## 起
+
+近期使用`Rust`高强度编程, 每天都要通过cargo下不少的crate. 可是明明已经为cargo更换了国内源, 但是在运行`cargo fetch` 下载依赖的时候却经常出现网络错误. 
+
+## 排查
+
+原本以为是IDEA在后台使用cargo, 所以可能是IDEA本身造成的网络原因, 可是经过测试之后, 尽管在终端, `bash` ,`powershell`, `cmd` 这些环境里, 成功快速地下载crate也完全是玄学, 好一会儿, 坏一会儿. 怀疑是镜像源网站的问题, 于是开始在每次`cargo fetch` 之前都检查镜像站是否ping通. 这时, 神奇的事情发生了, 镜像站可以ping通, 这就只能说明要么是cargo本身的问题, 要么就是电脑环境中其他的配置存在问题. 更诡异的是, 在`ping` 之后, 运行`cargo fetch`, 竟然每次都能很顺利地下载依赖. 遂尝试直接`ping` 世界最大交友网站`github.com` , 发现完全无法`ping` 通, 但博主一直能够依赖梯子在浏览器中正常访问`github.com`. 这种情况就很能说明问题了: 博主主机上`ping` 的GitHub的主机名是一个`错误的` 或者说 **伪装的** 主机名. 
+
+## 解决
+
+1. 直接修改本机的`host文件`, 在[国际IP查询网站](https://www.ipaddress.com/)上搜索`github.com` 的网址, 找到`github.com` 的主机名如下:
+
+**140.82.113.4**
+
+2. 填入`host` 文件中
+
+```
+140.82.113.4 github.com
+
+```
+
+3. 在终端中`ping` 测试连通性
+4. 测试`cargo fetch` 
+
+## 后
+
+
+为保险, 还是把`crates.io` 和 `docs.rs` `lib.rs` 的 IP地址也写入`host`中吧
+
+### crates.io
+
+- 108.138.64.48
+- 108.138.64.68 
+- 108.138.64.83
+- 108.138.64.108
+
+### docs.rs
+
+- 108.138.85.22 
+- 108.138.85.36 
+- 108.138.85.65 
+- 108.138.85.113
+
+### lib.rs
+
+**172.67.214.234**

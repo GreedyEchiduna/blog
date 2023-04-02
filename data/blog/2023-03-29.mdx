@@ -1,8 +1,8 @@
 ---
 title: 'JS逆向第一天'
 date: '2023-03-29'
-lastmod: '2023-03-29'
-tags: ['JS', 'Python', 'Rust', 'Reverse_Engineer']
+lastmod: '2023-03-30'
+tags: ['JS', 'Python', 'Rust', 'Reverse-Engineer']
 draft: false
 summary: '逆向入坑的常用工具参考记录(Rust和Python)'
 authors: ['default']
@@ -61,6 +61,14 @@ let encoded_with_pad = general_purpose::STANDARD.encode(orig) // WITH PAD
 
 ```
 
+#### JS的API
+
+一个过时的API
+```JS
+const get_base64 = (s) =>{
+    return new Buffer(s).toString("base64");
+}
+```
 
 
 
@@ -94,6 +102,15 @@ match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH) {
 }
 ```
 
+#### JS的API
+
+获取当前时间戳, 单位为秒
+```JS
+const timestamp_as_secs = () => {
+    return Date.parse(new Date()) / 1000
+}
+```
+
 ### MD5
 
 #### Python API 
@@ -120,6 +137,19 @@ let digest = md5::compute(b"abcdefghijklmnopqrstuvwxyz");
 assert_eq!(format!("{:x}", digest), "c3fcd3d76192e4007dfb496cca67e13b"); //{:x} 十六进制 小写
 ```
 [Rust中格式化参考文档](https://doc.rust-lang.org/std/fmt/index.html#fillalignment)
+
+
+#### JS的API
+
+得到小写有`=`的MD5结果
+```JS
+const crypto = require('crypto');
+const get_md5 = (s) =>{
+    const md5 = crypto.createHash('md5');
+    return md5.update(s).digest("hex");
+}
+```
+
 
 ## 进一步研究
 
